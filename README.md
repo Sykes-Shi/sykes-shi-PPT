@@ -14,21 +14,40 @@
 
 ## 安装
 
-需要已安装并支持技能的 Codex 环境，以及 Git。将本仓库克隆到当前用户的技能目录：
+需要已安装并支持技能的 Codex 环境，以及 [Git](https://git-scm.com/downloads)。以下按 [Codex 官方技能目录说明](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)安装到当前用户的 `~/.agents/skills`，供个人在不同项目中使用。
 
 ```powershell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-git clone https://github.com/Sykes-Shi/sykes-shi-PPT.git "$env:USERPROFILE\.codex\skills\sykes-shi-ppt"
+$skillsDir = Join-Path $env:USERPROFILE '.agents\skills'
+New-Item -ItemType Directory -Force -Path $skillsDir | Out-Null
+git clone https://github.com/Sykes-Shi/sykes-shi-PPT.git (Join-Path $skillsDir 'sykes-shi-ppt')
+Test-Path -LiteralPath (Join-Path $skillsDir 'sykes-shi-ppt\SKILL.md')
 ```
 
 macOS 或 Linux：
 
 ```bash
-mkdir -p ~/.codex/skills
-git clone https://github.com/Sykes-Shi/sykes-shi-PPT.git ~/.codex/skills/sykes-shi-ppt
+skills_dir="$HOME/.agents/skills"
+mkdir -p "$skills_dir"
+git clone https://github.com/Sykes-Shi/sykes-shi-PPT.git "$skills_dir/sykes-shi-ppt"
+test -f "$skills_dir/sykes-shi-ppt/SKILL.md" && echo 'SKILL.md found'
 ```
 
-安装后，必要时重新打开 Codex 会话以加载新技能。技能提供制作指引，实际创建和渲染 PPTX 还需要当前环境具备相应的演示文稿处理能力。
+安装后检查命令应分别显示 `True` 或 `SKILL.md found`。打开一个新的 Codex 会话，输入 `$sykes-shi-ppt` 调用；若当前会话找不到技能，重新打开 Codex 并核对上面的技能目录和 `SKILL.md` 是否位于 `sykes-shi-ppt` 的**直接下一级**。如果目标文件夹已存在，先检查是否已有安装和未保存的修改，避免覆盖。
+
+此前通过 Git 克隆安装过的用户，可在确认安装目录没有需要保留的未提交修改后，运行 `git -C "技能安装目录的实际路径" pull --ff-only` 更新，再开启新会话。手动下载或其他方式安装的副本，应先备份个人修改，再按实际安装方式更新。早期版本说明使用过 `.codex/skills`；如果在那里安装后找不到技能，可将完整项目重新克隆到上面的 `.agents/skills` 目录。请先检查已有副本，避免不必要的重复安装或覆盖修改。
+
+**技能文件是制作指引，不包含 PPTX 制作和渲染程序。**实际能力取决于 Codex 当前的运行环境。请使用能访问本地文件的工作环境；若使用云端环境或外部服务，先确认它能访问哪些文件，以及是否获准发送素材。
+
+安装后建议先在 Codex 中复制以下自检任务，使用独立的本地输出目录：
+
+```text
+$sykes-shi-ppt 请检查当前环境是否能访问本地文件、创建可编辑 PPTX 并渲染页面。
+请用虚构内容在【云同步目录之外的测试输出路径】制作一页 PPTX，
+验证文字能否编辑并尝试渲染成图片或 PDF；分别报告实际完成的检查和文件路径。
+如果缺少工具，请列出缺失项和可选安装方案，不要上传我的素材。
+```
+
+没有现成工具时，可让 Codex 在云同步目录外的独立环境配置 [python-pptx](https://python-pptx.readthedocs.io/) 以创建或修改常见 PPTX，并使用 [LibreOffice](https://www.libreoffice.org/download/download-libreoffice/) 等工具渲染。具体安装、自检和常见问题见 [环境准备与排查](docs/setup-and-troubleshooting.md)。复杂动画、交互或原稿母版的保真能力需按实际工具与任务验证。
 
 ## 从零开始
 
