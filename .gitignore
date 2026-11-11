@@ -1,0 +1,19 @@
+# Local reference libraries, work files and generated presentations
+assets/
+local/
+work/
+output/
+outputs/
+*.ppt
+*.pptx
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.tmp
+~$*
+__pycache__/
+.DS_Store
+Thumbs.db
